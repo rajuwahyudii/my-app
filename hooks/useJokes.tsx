@@ -26,6 +26,16 @@ const useJokeCategories = () => {
             setLoading(false);
         }
     };
+    // const move = (data: CategoriesInterface | null): CategoriesInterface | null => {
+    //     if (data && Array.isArray(data) && data.length > 3) {
+    //         const elementToMove = data[3];
+    //         const newData = [...data];
+    //         newData.splice(3, 1);
+    //         newData.unshift(elementToMove);
+    //         return newData;
+    //     }
+    //     return data;
+    // };
 
     useEffect(() => {
         fetchCategories();

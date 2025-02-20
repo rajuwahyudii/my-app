@@ -1,19 +1,54 @@
 
 import CardComp from "@/components/ui/organism/card";
 import useJokeCategories from "@/hooks/useJokes";
-import { Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { useState } from "react";
+import { Text, StyleSheet, SafeAreaView, ScrollView, View, Modal, Button } from "react-native";
 
 function HomeScreen() {
     const { categories, loading, error, refreshCategories } = useJokeCategories();
+    const [text, setText] = useState('');
+    const [visible, setVisible] = useState(false);
+    const showModal = (a: string) => {
+        if (visible) {
+            setVisible(false)
+            return
+        }
+
+        setText(a)
+        setVisible(true)
+
+    }
+    if (loading) {
+        <Text>Loading...</Text>
+    }
+
+    if (error) {
+        <Text>Error</Text>
+    }
 
     return (
         <>
             <SafeAreaView>
-                <Text >Joke App</Text>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={visible}
+                    onRequestClose={() => {
+                        setVisible(!visible);
+                    }}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text >{text}</Text>
+                            <Button title="Ok" onPress={() => showModal('')} />
+                        </View>
+                    </View>
+                </Modal>
+                <Text style={styles.title}>Joke App</Text>
                 <ScrollView>
                     {
                         categories?.categories.map((word, index) => (
-                            <CardComp key={index} number={index} categories={word} />
+                            <CardComp showModal={showModal} key={index} number={index} categories={word} />
                         ))
                     }
                 </ScrollView>
@@ -23,6 +58,32 @@ function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+    title: {
+        fontSize: 24,
+        paddingVertical: 8,
+        paddingHorizontal: 4,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
     centered: {
         flex: 1,
         justifyContent: 'center',

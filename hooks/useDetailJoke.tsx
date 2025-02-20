@@ -7,7 +7,7 @@ const useDetailJokeCategories = (category: string, paging: number = 2) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchCategories = async () => {
+    const fetchJoke = async () => {
         try {
             setLoading(true);
             setError(null);
@@ -28,17 +28,17 @@ const useDetailJokeCategories = (category: string, paging: number = 2) => {
     };
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
-    const refreshCategories = () => {
-        fetchCategories();
+        fetchJoke();
+    }, [category, paging]);
+    const refreshJoke = () => {
+        fetchJoke();
     };
 
     return {
         joke,
         loading,
         error,
-        refreshCategories
+        refreshJoke
     };
 }
 

@@ -1,14 +1,19 @@
 import { useRef, useState } from "react";
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ChevronUp, ChevronDown } from 'lucide-react-native';
 import TextButton from "../atoms/textButton";
+import useDetailJokeCategories from "@/hooks/useDetailJoke";
 
-function CardComp({ number, categories }: { number: number, categories: string }) {
+function CardComp({ number, categories, showModal }: { number: number, categories: string, showModal: (text: string) => void; }) {
+    const [page, setPage] = useState(2)
+    const { joke, loading, error, refreshJoke } = useDetailJokeCategories(categories, page);
     const [isExpanded, setIsExpanded] = useState(false);
     const animationHeight = useRef(new Animated.Value(0)).current;
-
+    const increasePage = () => {
+        setPage(page + 1);
+    }
     const toggleExpand = () => {
-        const finalValue = isExpanded ? 0 : 150;
+        const finalValue = isExpanded ? 0 : 300;
         setIsExpanded(!isExpanded);
         Animated.timing(animationHeight, {
             toValue: finalValue,
@@ -16,6 +21,13 @@ function CardComp({ number, categories }: { number: number, categories: string }
             useNativeDriver: false,
         }).start();
     };
+    if (loading) {
+        <Text>Loading...</Text>
+    }
+
+    if (error) {
+        <Text>error</Text>
+    }
     return (
         <View style={styles.section}>
             <TouchableOpacity
@@ -33,7 +45,7 @@ function CardComp({ number, categories }: { number: number, categories: string }
                     ) : (
                         <TouchableOpacity
                             style={styles.goTopButton}
-                        // onPress={onGoTop}
+                        // onPress={increasePage}
                         >
                             <Text style={styles.goTopText}>Go Top</Text>
                         </TouchableOpacity>
@@ -45,19 +57,27 @@ function CardComp({ number, categories }: { number: number, categories: string }
                     )}
                 </View>
             </TouchableOpacity>
-
             <Animated.View style={[styles.content, { height: animationHeight }]}>
-                <View style={styles.contentInner}>
-                    <TextButton text="test"></TextButton>
-                    <TouchableOpacity style={styles.addButton}>
-                        <Text style={styles.addButtonText}>Add more data</Text>
-                    </TouchableOpacity>
-                </View>
+                <ScrollView style={styles.contentInner}>
+                    {
+                        joke?.jokes.map((data, index) => (
+                            <Pressable key={index} onPress={() => showModal(data.joke)}>
+                                <TextButton text={data.joke} />
+                            </Pressable>
+                        ))
+                    }
+                    {page < 4 && joke?.amount && (
+                        <TouchableOpacity style={styles.addButton} onPress={increasePage}>
+                            <Text style={styles.addButtonText}>Add more data</Text>
+                        </TouchableOpacity>
+                    )}
+                </ScrollView>
             </Animated.View>
         </View>
     )
 }
 const styles = StyleSheet.create({
+
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
