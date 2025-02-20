@@ -5,9 +5,14 @@ import { useState } from "react";
 import { Text, StyleSheet, SafeAreaView, ScrollView, View, Modal, Button } from "react-native";
 
 function HomeScreen() {
-    const { categories, loading, error, refreshCategories } = useJokeCategories();
+    const { categories, loading, error, refreshCategories, moveCategoryIndex } = useJokeCategories();
     const [text, setText] = useState('');
     const [visible, setVisible] = useState(false);
+    const handleMove = (index: number) => {
+        if (categories?.categories && Array.isArray(categories.categories)) {
+            moveCategoryIndex(index, 0);
+        }
+    };
     const showModal = (a: string) => {
         if (visible) {
             setVisible(false)
@@ -48,7 +53,7 @@ function HomeScreen() {
                 <ScrollView>
                     {
                         categories?.categories.map((word, index) => (
-                            <CardComp showModal={showModal} key={index} number={index} categories={word} />
+                            <CardComp showModal={showModal} key={index} number={index} categories={word} moveArray={handleMove} />
                         ))
                     }
                 </ScrollView>

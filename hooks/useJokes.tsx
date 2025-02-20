@@ -26,20 +26,23 @@ const useJokeCategories = () => {
             setLoading(false);
         }
     };
-    // const move = (data: CategoriesInterface | null): CategoriesInterface | null => {
-    //     if (data && Array.isArray(data) && data.length > 3) {
-    //         const elementToMove = data[3];
-    //         const newData = [...data];
-    //         newData.splice(3, 1);
-    //         newData.unshift(elementToMove);
-    //         return newData;
-    //     }
-    //     return data;
-    // };
+    const moveCategoryIndex = (fromIndex: number, toIndex: number) => {
+        if (!categories?.categories || !Array.isArray(categories.categories)) {
+            return categories?.categories;
+        }
+        const newCategories = [...categories.categories];
+        if (fromIndex < 0 || fromIndex >= newCategories.length || toIndex < 0 || toIndex >= newCategories.length) {
+            return newCategories;
+        }
+        const element = newCategories.splice(fromIndex, 1)[0];
+        newCategories.splice(toIndex, 0, element);
 
+        categories.categories = newCategories
+        return categories
+    };
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [categories]);
     const refreshCategories = () => {
         fetchCategories();
     };
@@ -48,7 +51,8 @@ const useJokeCategories = () => {
         categories,
         loading,
         error,
-        refreshCategories
+        refreshCategories,
+        moveCategoryIndex,
     };
 }
 

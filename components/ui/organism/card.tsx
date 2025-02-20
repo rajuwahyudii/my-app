@@ -4,7 +4,7 @@ import { ChevronUp, ChevronDown } from 'lucide-react-native';
 import TextButton from "../atoms/textButton";
 import useDetailJokeCategories from "@/hooks/useDetailJoke";
 
-function CardComp({ number, categories, showModal }: { number: number, categories: string, showModal: (text: string) => void; }) {
+function CardComp({ number, categories, showModal, moveArray }: { number: number, categories: string, showModal: (text: string) => void, moveArray: (index: number) => void }) {
     const [page, setPage] = useState(2)
     const { joke, loading, error, refreshJoke } = useDetailJokeCategories(categories, page);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -45,7 +45,7 @@ function CardComp({ number, categories, showModal }: { number: number, categorie
                     ) : (
                         <TouchableOpacity
                             style={styles.goTopButton}
-                        // onPress={increasePage}
+                            onPress={() => { moveArray(number) }}
                         >
                             <Text style={styles.goTopText}>Go Top</Text>
                         </TouchableOpacity>
